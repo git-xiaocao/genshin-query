@@ -2,26 +2,22 @@ package me.xiaocao
 
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.engine.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import me.xiaocao.dto.PlayInfo
-import me.xiaocao.dto.QueryResponse
+import me.xiaocao.dto.QueryResult
 import me.xiaocao.dto.QueryRole
+import me.xiaocao.entity.PlayInfo
+import me.xiaocao.entity.SpiralAbyssInfo
 import okhttp3.Interceptor
 import okhttp3.Response
+import java.security.SecureRandom
 import java.security.cert.X509Certificate
+import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
-
-class CustomX509TrustManager : X509TrustManager {
-    override fun getAcceptedIssuers(): Array<X509Certificate?> = arrayOf()
-
-    override fun checkClientTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
-
-    override fun checkServerTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
-}
 
 class GenshinQuery(
     private val salt: String,
@@ -69,28 +65,31 @@ class GenshinQuery(
 
     }
 
-
-    suspend fun queryPlayInfo(uid: String, server: String): QueryResponse<PlayInfo> {
+    //QueryResult<PlayInfo>
+    suspend fun queryPlayInfo(uid: String, server: String): QueryResult<PlayInfo> {
         val response = httpClient.get {
             url("https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/index")
             parameter("role_id", uid)
             parameter("server", server)
-
         }
         return response.body()
     }
 
-    suspend fun querySpiralAbyssInfo(type: String, uid: String, server: String): QueryResponse<String> {
-        val response = httpClient.get("https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/spiralAbyss") {
+    //查询深渊信息
+    suspend fun querySpiralAbyssInfo(type: String, uid: String, server: String): QueryResult<SpiralAbyssInfo> {
+        val response = httpClient.get {
+            url("https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/spiralAbyss")
             parameter("schedule_type", type)
-            parameter("role_id", uid)
             parameter("server", server)
+            parameter("role_id", uid)
         }
         return response.body()
     }
 
-    suspend fun queryCharacters(uid: String, server: String, characterIds: List<Int>): QueryResponse<String> {
-        val response = httpClient.post("https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/character") {
+    //没测试
+    suspend fun queryCharacters(uid: String, server: String, characterIds: List<Int>): String {
+        val response = httpClient.post {
+            url("https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/character")
             setBody(
                 QueryRole(
                     characterIds = characterIds,

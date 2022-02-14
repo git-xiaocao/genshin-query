@@ -6,7 +6,13 @@ import kotlin.random.Random
 
 object Utils {
     fun dynamicSecret(salt: String, url: HttpUrl, body: String?): String {
-        val query = url.query
+        val query = if (null == url.query) {
+            ""
+        } else {
+            url.query!!.split("&").sortedBy { it }.joinToString("&")
+        }
+
+
         val time = System.currentTimeMillis() / 1000
         val random = randomString(6)
         val check = md5HexString("salt=$salt&t=$time&r=$random&b=${body ?: ""}&q=$query")
