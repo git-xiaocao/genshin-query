@@ -1,4 +1,4 @@
-package me.xiaocao.entity
+package site.xiaocao.genshin.entity
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

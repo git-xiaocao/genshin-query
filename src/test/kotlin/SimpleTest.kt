@@ -1,5 +1,5 @@
 import kotlinx.coroutines.runBlocking
-import me.xiaocao.GenshinQuery
+import site.xiaocao.genshin.GenshinQuery
 import java.io.File
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -26,7 +26,7 @@ class SimpleTest {
         runBlocking {
             //cn_qd01
             //cn_gf01
-            val result = genshinQuery.queryPlayInfo("", "cn_gf01")
+            val result = genshinQuery.playInfo("", "cn_gf01")
             if (result.success) {
                 val playInfo = result.data
                 println(playInfo)
@@ -42,13 +42,21 @@ class SimpleTest {
     fun testQuerySpiralAbyssInfo() {
         runBlocking {
             //1这一期 2上一期
-            val result = genshinQuery.querySpiralAbyssInfo("1", "", "cn_gf01")
+            val result = genshinQuery.spiralAbyssInfo("1", "", "cn_gf01")
             if (result.success) {
                 val playInfo = result.data
                 println(playInfo)
             } else {
                 println("查询失败:${result.message}")
             }
+        }
+    }
+
+    @Test
+    fun testQueryDailyNote() {
+        runBlocking {
+            val result = genshinQuery.dailyNote("", "cn_gf01")
+            println(result)
         }
     }
 }

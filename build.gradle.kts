@@ -7,8 +7,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.6.10"
 }
 
-group = "me.xiaocao"
-version = "0.1.0"
+group = "site.xiaocao.genshin"
+version = "0.2.0"
 
 repositories {
     mavenCentral()

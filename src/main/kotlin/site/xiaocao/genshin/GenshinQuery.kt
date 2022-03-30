@@ -1,23 +1,19 @@
-package me.xiaocao
+package site.xiaocao.genshin
 
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import me.xiaocao.dto.QueryResult
-import me.xiaocao.dto.QueryRole
-import me.xiaocao.entity.PlayInfo
+import site.xiaocao.genshin.dto.QueryResult
+import site.xiaocao.genshin.dto.QueryRole
+import site.xiaocao.genshin.entity.PlayInfo
 import me.xiaocao.entity.SpiralAbyssInfo
 import okhttp3.Interceptor
 import okhttp3.Response
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.X509TrustManager
+import site.xiaocao.genshin.entity.DailyNote
 
 class GenshinQuery(
     private val salt: String,
@@ -65,8 +61,12 @@ class GenshinQuery(
 
     }
 
-    //QueryResult<PlayInfo>
-    suspend fun queryPlayInfo(uid: String, server: String): QueryResult<PlayInfo> {
+    /**
+     * 查询玩家信息
+     * @param uid 玩家的uid
+     * @param server 服务器名 cn_qd01 cn_gf01
+     * */
+    suspend fun playInfo(uid: String, server: String): QueryResult<PlayInfo> {
         val response = httpClient.get {
             url("https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/index")
             parameter("role_id", uid)
@@ -75,8 +75,13 @@ class GenshinQuery(
         return response.body()
     }
 
-    //查询深渊信息
-    suspend fun querySpiralAbyssInfo(type: String, uid: String, server: String): QueryResult<SpiralAbyssInfo> {
+    /**
+     * 查询深渊信息
+     * @param type "1" 这一期 "2" 上一期
+     * @param uid 玩家的uid
+     * @param server 服务器名 cn_qd01 cn_gf01
+     * */
+    suspend fun spiralAbyssInfo(type: String, uid: String, server: String): QueryResult<SpiralAbyssInfo> {
         val response = httpClient.get {
             url("https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/spiralAbyss")
             parameter("schedule_type", type)
@@ -87,7 +92,7 @@ class GenshinQuery(
     }
 
     //没测试
-    suspend fun queryCharacters(uid: String, server: String, characterIds: List<Int>): String {
+    suspend fun characters(uid: String, server: String, characterIds: List<Int>): String {
         val response = httpClient.post {
             url("https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/character")
             setBody(
@@ -101,4 +106,17 @@ class GenshinQuery(
         return response.body()
     }
 
+    /**
+     * 查询实时便笺
+     * @param uid 玩家的uid
+     * @param server 服务器名 cn_qd01 cn_gf01
+     * */
+    suspend fun dailyNote(uid: String, server: String): QueryResult<DailyNote> {
+        val response = httpClient.get {
+            url("https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/dailyNote")
+            parameter("role_id", uid)
+            parameter("server", server)
+        }
+        return response.body()
+    }
 }

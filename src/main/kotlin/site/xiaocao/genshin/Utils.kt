@@ -1,10 +1,10 @@
-package me.xiaocao
+package site.xiaocao.genshin
 
 import okhttp3.HttpUrl
 import java.security.MessageDigest
 import kotlin.random.Random
 
-object Utils {
+internal object Utils {
     fun dynamicSecret(salt: String, url: HttpUrl, body: String?): String {
         val query = if (null == url.query) {
             ""
